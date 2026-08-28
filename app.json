@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Home",
+    "slug": "home",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "icon": "./assets/icon.png",
+      "edgeToEdgeEnabled": true,
+      "package": "com.dkashirskiy.home",
+      "barStyle": "dark-content"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a2159ae6-564e-4c2e-8de8-69a259c96c30"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/a2159ae6-564e-4c2e-8de8-69a259c96c30"
+    }
+  }
+}
