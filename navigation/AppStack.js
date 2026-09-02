@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../screens/HomeScreen";
 import DeviceDetailScreen from "../screens/DeviceDetailScreen";
 import JournalScreen from "../screens/JournalScreen";
+import SensorsScreen from "../screens/SensorsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +34,13 @@ function AppStack() {
         component={JournalScreen}
         options={{
           title: "Журнал",
+        }}
+      />
+      <Stack.Screen
+        name="Sensors"
+        component={SensorsScreen}
+        options={{
+          title: "Сенсоры",
         }}
       />
     </Stack.Navigator>

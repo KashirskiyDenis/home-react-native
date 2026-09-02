@@ -1,8 +1,7 @@
 import { View, TouchableOpacity } from "react-native";
-import BoolProperty from "./BoolProperty";
-import StringProperty from "./StringProperty";
-import ValueProperty from "./ValueProperty";
-import { COLOR_ACCENT } from "../constants/colors";
+import BoolField from "./BoolField";
+import StringField from "./StringField";
+import ValueField from "./ValueField";
 
 function WaterValveController({ navigation, properties, onToggleProperty }) {
   let names = [];
@@ -14,54 +13,53 @@ function WaterValveController({ navigation, properties, onToggleProperty }) {
 
   return (
     <View>
-      {properties.map((item, index) => {
-        if (item.code === "use_time") {
+      {properties.map((property, index) => {
+        if (property.code === "use_time") {
           return (
-            <ValueProperty
+            <ValueField
               key={index}
               code={"Время уборки"}
-              value={item.value}
+              value={`${property.value} мин.`}
             />
           );
-        } else if (item.code === "alarm" || item.code === "cleaning") {
-          let code = item.code === "alarm" ? "Тревога" : "Уборка";
+        } else if (property.code === "alarm" || property.code === "cleaning") {
+          let code = property.code === "alarm" ? "Тревога" : "Уборка";
           return (
-            <BoolProperty
+            <BoolField
               key={index}
               code={code}
-              value={item.value}
+              value={property.value}
               onValueChange={(newValue) => {
-                onToggleProperty?.(item.code, newValue);
+                onToggleProperty?.(newValue, property.code);
               }}
             />
           );
-        } else if (item.code === "journal") {
+        } else if (property.code === "journal") {
           return (
             <TouchableOpacity
-              key=""
+              key={index}
               onPress={() =>
-                navigation.navigate("Journal", { journal: item.value })
+                navigation.navigate("Journal", { journal: property.value })
               }
             >
-              <StringProperty
-                key={index}
-                code={"Журнал"}
-                value="&#9654;"
-                style={{ color: COLOR_ACCENT }}
-              />
+              <StringField code={"Журнал"} value="&#9655;" newScreen={true} />
             </TouchableOpacity>
           );
-        } else if (item.code === "sensors") {
-          let sensors = item.value.match(/.{1,4}/g);
-
-          return sensors.map((sensor, i) => {
-            return sensor !== "@~~;" ? (
-              <StringProperty key={i} code={names[i]} value={sensor} />
-            ) : null;
-          });
+        } else if (property.code === "sensors") {
+          return (
+            <TouchableOpacity
+              key={index}
+              onPress={() =>
+                navigation.navigate("Sensors", {
+                  sensors: property.value.match(/.{1,4}/g),
+                  names,
+                })
+              }
+            >
+              <StringField code={"Сенсоры"} value="&#9655;" newScreen={true} />
+            </TouchableOpacity>
+          );
         }
-
-        return null;
       })}
     </View>
   );

@@ -59,7 +59,7 @@ const HomeScreen = ({ navigation }) => {
       }
     } finally {
       clearTimeout(timeoutId);
-      if (isMountedRef.current) {
+      if (isMountedRef.current && controllerRef.current === controller) {
         setRefreshing(false);
       }
     }
@@ -95,9 +95,9 @@ const HomeScreen = ({ navigation }) => {
                   device: { ...item },
                 })
               }
-              style={commonStyles.listElement}
+              style={commonStyles.listItem}
             >
-              <Text style={commonStyles.listText}>{item.name}</Text>
+              <Text style={commonStyles.listItemText}>{item.name}</Text>
             </TouchableOpacity>
           );
         })}

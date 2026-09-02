@@ -9,8 +9,8 @@ const JournalScreen = ({ route }) => {
     <ScrollView style={commonStyles.container}>
       {journal.map((item, index) => {
         return (
-          <View style={commonStyles.listElement} key={index}>
-            <Text style={commonStyles.listText}>{item}</Text>
+          <View style={commonStyles.listItem} key={index}>
+            <Text style={commonStyles.listItemText}>{item}</Text>
           </View>
         );
       })}

@@ -6,16 +6,18 @@ import {
   StyleSheet,
   Text,
   Switch,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { API_KEY, BASE_URL } from "../constants/home";
 import WaterValveController from "../components/WaterValveController";
 import commonStyles from "../styles/commonStyles";
+import BoolField from "../components/BoolField";
+import StringField from "../components/StringField";
+import ValueField from "../components/ValueField";
 
 const DeviceDetailScreen = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = useState(false);
-  const [status, setStatus] = useState(route.params?.device.status);
+  const [statuses, setStatuses] = useState(route.params?.device.status);
   const [properties, setProperties] = useState([]);
   const controllerRef = useRef(null);
   const isMountedRef = useRef(true);
@@ -56,24 +58,24 @@ const DeviceDetailScreen = ({ navigation, route }) => {
       }
     } finally {
       clearTimeout(timeoutId);
-      if (isMountedRef.current) {
+      if (isMountedRef.current && controllerRef.current === controller) {
         setRefreshing(false);
       }
     }
   }, []);
 
-  const toggleStatus = (newValue, indexKey) => {
-    setStatus(
-      status.map((item, index) =>
-        index === indexKey ? { ...item, value: newValue } : item,
+  const toggleStatus = (newValue, code) => {
+    setStatuses(
+      statuses.map((item) =>
+        item.code === code ? { ...item, value: newValue } : item,
       ),
     );
   };
 
-  const togglePropertyValue = (newValue, indexProperty) => {
+  const togglePropertyValue = (newValue, code) => {
     setProperties(
-      properties.map((property, index) => {
-        return index === indexProperty
+      properties.map((property) => {
+        return property.code === code
           ? { ...property, value: newValue }
           : property;
       }),
@@ -100,50 +102,41 @@ const DeviceDetailScreen = ({ navigation, route }) => {
         />
       }
     >
-      <View style={commonStyles.listElement}>
-        <Text style={commonStyles.listText}>
-          Название: {route.params?.device.name}
-        </Text>
-      </View>
-      <View style={commonStyles.listElement}>
-        <Text style={commonStyles.listText}>
-          Название продукта: {route.params?.device.product_name}
-        </Text>
-      </View>
-      <View style={commonStyles.listElement}>
-        <Text style={commonStyles.listText}>
-          Интернет статус:{" "}
-          <Text
-            style={[
-              route.params?.device.online
-                ? styles.stateOnline
-                : styles.stateOffline,
-              commonStyles.listText,
-            ]}
-          >
-            {route.params?.device.online ? "Online" : "Offline"}
-          </Text>
-        </Text>
-      </View>
-      <View style={commonStyles.listElement}>
-        <Text style={commonStyles.listText}>
-          Категория: {route.params?.device.category_title}
-        </Text>
-      </View>
-      {status.map((item, indexStatus) => {
-        if (item.code == "switch") {
+      <StringField code={"Название"} value={route.params?.device.name} />
+      <StringField
+        code={"Название продукта"}
+        value={route.params?.device.product_name}
+      />
+      <StringField
+        code={"Интернет статус"}
+        value={route.params?.device.online ? "Online" : "Offline"}
+        styleValue={[
+          styles.textBold,
+          route.params?.device.online
+            ? styles.stateOnline
+            : styles.stateOffline,
+        ]}
+      />
+      <StringField
+        code={"Категория"}
+        value={route.params?.device.category_title}
+      />
+      {statuses.map((states, indexStatus) => {
+        if (states.code == "switch") {
           return (
-            <View style={commonStyles.listElement} key={indexStatus}>
-              <View style={commonStyles.rowSwitch}>
+            <View style={commonStyles.listItem} key={indexStatus}>
+              <View style={commonStyles.listItemFlexRow}>
                 <View>
-                  <Text style={commonStyles.listText}>Закрыто / Открыто:</Text>
+                  <Text style={commonStyles.listItemText}>
+                    Закрыто / Открыто:
+                  </Text>
                 </View>
                 <View>
                   <Switch
                     onValueChange={(newValue) => {
-                      toggleStatus(newValue, indexStatus);
+                      toggleStatus(newValue, states.code);
                     }}
-                    value={item.value}
+                    value={states.value}
                   />
                 </View>
               </View>
@@ -166,6 +159,9 @@ const styles = StyleSheet.create({
   },
   stateOffline: {
     color: "#ff0000",
+  },
+  textBold: {
+    fontWeight: "600",
   },
 });
 

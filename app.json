@@ -18,7 +18,9 @@
     "android": {
       "icon": "./assets/icon.png",
       "edgeToEdgeEnabled": true,
-      "package": "com.dkashirskiy.home",
+      "package": "com.dkashirskiy.home"
+    },
+    "androidStatusBar": {
       "barStyle": "dark-content"
     },
     "extra": {
