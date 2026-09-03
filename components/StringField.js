@@ -7,25 +7,31 @@ function StringField({
   styleValue,
   edit = false,
   newScreen = false,
+  onPressAction,
 }) {
   return (
     <View style={commonStyles.listItem}>
       <View style={[commonStyles.listItemFlexRow]}>
         <Text style={commonStyles.listItemText}>
           {code}
-          {!newScreen && !edit && (
-            <>
-              <Text style={commonStyles.listItemText}>: </Text>
-              <Text style={[commonStyles.listItemText, styleValue]}>
-                {value}
-              </Text>
-            </>
-          )}
+          <>
+            <Text style={commonStyles.listItemText}>: </Text>
+            <Text style={[commonStyles.listItemText, styleValue]}>{value}</Text>
+          </>
         </Text>
-        {edit && <Text style={[commonStyles.listItemText]}>{value}</Text>}
+        {edit && (
+          <Text
+            style={[commonStyles.listItemText, commonStyles.symbols]}
+            accessibilityRole="button"
+            accessibilityLabel={`Введите новое значение для свойства ${code}`}
+            onPress={onPressAction}
+          >
+            &#9998;
+          </Text>
+        )}
         {newScreen && (
           <Text style={[commonStyles.listItemText, commonStyles.symbols]}>
-            {value}
+            &#9655;
           </Text>
         )}
       </View>

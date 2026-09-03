@@ -13,6 +13,9 @@ function AppStack() {
       screenOptions={{
         headerBackTitleVisible: false,
         orientation: "portrait",
+        contentStyle: {
+          backgroundColor: "#ffffff",
+        },
       }}
     >
       <Stack.Screen

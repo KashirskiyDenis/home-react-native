@@ -5,7 +5,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  Switch,
   View,
 } from "react-native";
 import { API_KEY, BASE_URL } from "../constants/home";
@@ -14,8 +13,12 @@ import commonStyles from "../styles/commonStyles";
 import BoolField from "../components/BoolField";
 import StringField from "../components/StringField";
 import ValueField from "../components/ValueField";
+import PromptModal from "../components/PromptModal";
 
 const DeviceDetailScreen = ({ navigation, route }) => {
+  const [promptModalVisible, setPromptModalVisible] = useState(false);
+  const [promptText, setPromptText] = useState("");
+
   const [refreshing, setRefreshing] = useState(false);
   const [statuses, setStatuses] = useState(route.params?.device.status);
   const [properties, setProperties] = useState([]);
@@ -82,6 +85,18 @@ const DeviceDetailScreen = ({ navigation, route }) => {
     );
   };
 
+  const openModal = () => {
+    setPromptText("");
+    setPromptModalVisible(true);
+  };
+
+  const changePromptText = () => {
+    if (promptText.trim().length === 0) {
+      return;
+    }
+    setPromptModalVisible(false);
+  };
+
   useEffect(() => {
     isMountedRef.current = true;
 
@@ -93,63 +108,97 @@ const DeviceDetailScreen = ({ navigation, route }) => {
   }, [getPropertiesOfDevice]);
 
   return (
-    <ScrollView
-      style={commonStyles.container}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={() => getPropertiesOfDevice()}
-        />
-      }
-    >
-      <StringField code={"Название"} value={route.params?.device.name} />
-      <StringField
-        code={"Название продукта"}
-        value={route.params?.device.product_name}
+    <>
+      <PromptModal
+        visible={promptModalVisible}
+        onClose={() => setPromptModalVisible(false)}
+        text={promptText}
+        onChangeText={setPromptText}
+        onSubmit={changePromptText}
       />
-      <StringField
-        code={"Интернет статус"}
-        value={route.params?.device.online ? "Online" : "Offline"}
-        styleValue={[
-          styles.textBold,
-          route.params?.device.online
-            ? styles.stateOnline
-            : styles.stateOffline,
-        ]}
-      />
-      <StringField
-        code={"Категория"}
-        value={route.params?.device.category_title}
-      />
-      {statuses.map((states, indexStatus) => {
-        if (states.code == "switch") {
-          return (
-            <View style={commonStyles.listItem} key={indexStatus}>
-              <View style={commonStyles.listItemFlexRow}>
-                <View>
-                  <Text style={commonStyles.listItemText}>
-                    Закрыто / Открыто:
-                  </Text>
-                </View>
-                <View>
-                  <Switch
-                    onValueChange={(newValue) => {
-                      toggleStatus(newValue, states.code);
-                    }}
-                    value={states.value}
-                  />
-                </View>
-              </View>
-            </View>
-          );
+      <ScrollView
+        style={commonStyles.container}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => getPropertiesOfDevice()}
+          />
         }
-      })}
-      <WaterValveController
-        properties={properties}
-        navigation={navigation}
-        onToggleProperty={togglePropertyValue}
-      />
-    </ScrollView>
+      >
+        <View style={commonStyles.listItem}>
+          <Text style={[commonStyles.listItemSubheaders]}>
+            Общая информация
+          </Text>
+        </View>
+
+        <StringField code={"Название"} value={route.params?.device.name} />
+        <StringField
+          code={"Название продукта"}
+          value={route.params?.device.product_name}
+        />
+        <StringField
+          code={"Интернет статус"}
+          value={route.params?.device.online ? "Online" : "Offline"}
+          styleValue={[
+            styles.textBold,
+            route.params?.device.online
+              ? styles.stateOnline
+              : styles.stateOffline,
+          ]}
+        />
+        <StringField
+          code={"Категория"}
+          value={route.params?.device.category_title}
+        />
+        <View style={commonStyles.listItem}>
+          <Text style={[commonStyles.listItemSubheaders]}>Статусы</Text>
+        </View>
+        {statuses.map((status, indexStatus) => {
+          if (typeof status.value === "number") {
+            return (
+              <StringField
+                key={indexStatus}
+                code={status.code}
+                value={status.value}
+                styleValue={[styles.textBold]}
+                edit={true}
+                onPressAction={openModal}
+              />
+            );
+          } else if (typeof status.value === "boolean") {
+            return (
+              <BoolField
+                key={indexStatus}
+                code={"Закрыто / Открыто:"}
+                value={status.value}
+                onValueChange={(newValue) => {
+                  toggleStatus(newValue, status.code);
+                }}
+                onPressAction={changePromptText}
+              />
+            );
+          } else if (typeof status.value === "string") {
+            return (
+              <StringField
+                key={indexStatus}
+                code={status.code}
+                value={status.value}
+                styleValue={[styles.textBold]}
+              />
+            );
+          }
+        })}
+        <View style={commonStyles.listItem}>
+          <Text style={[commonStyles.listItemSubheaders]}>Свойства</Text>
+        </View>
+        <WaterValveController
+          properties={properties}
+          navigation={navigation}
+          onToggleProperty={togglePropertyValue}
+          onPressAction={openModal}
+        />
+      </ScrollView>
+    </>
   );
 };
 

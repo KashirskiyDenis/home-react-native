@@ -3,8 +3,6 @@ import commonStyles from "../styles/commonStyles";
 import StringField from "../components/StringField";
 
 const SensorsScreen = ({ route }) => {
-  console.log(route.params);
-
   return (
     <ScrollView style={commonStyles.container}>
       {route.params?.sensors.map((sensor, index) => {

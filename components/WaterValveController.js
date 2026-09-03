@@ -3,7 +3,12 @@ import BoolField from "./BoolField";
 import StringField from "./StringField";
 import ValueField from "./ValueField";
 
-function WaterValveController({ navigation, properties, onToggleProperty }) {
+function WaterValveController({
+  navigation,
+  properties,
+  onToggleProperty,
+  onPressAction,
+}) {
   let names = [];
   for (let i = 0; i < properties.length; i++) {
     if (properties[i].code.includes("names")) {
@@ -42,7 +47,7 @@ function WaterValveController({ navigation, properties, onToggleProperty }) {
                 navigation.navigate("Journal", { journal: property.value })
               }
             >
-              <StringField code={"Журнал"} value="&#9655;" newScreen={true} />
+              <StringField code={"Журнал"} newScreen={true} />
             </TouchableOpacity>
           );
         } else if (property.code === "sensors") {
@@ -56,7 +61,7 @@ function WaterValveController({ navigation, properties, onToggleProperty }) {
                 })
               }
             >
-              <StringField code={"Сенсоры"} value="&#9655;" newScreen={true} />
+              <StringField code={"Сенсоры"} newScreen={true} />
             </TouchableOpacity>
           );
         }

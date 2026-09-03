@@ -1,5 +1,9 @@
 import { StyleSheet } from "react-native";
-import { COLOR_ACCENT } from "../constants/colors";
+import {
+  COLOR_ACCENT,
+  COLOR_TEXT_PRIMARY,
+  COLOR_TEXT_SECONDARY,
+} from "../constants/colors";
 
 const commonStyles = StyleSheet.create({
   container: {
@@ -17,8 +21,13 @@ const commonStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  listItemSubheaders: {
+    fontSize: 16,
+    color: COLOR_TEXT_SECONDARY,
+  },
   listItemText: {
     fontSize: 16,
+    color: COLOR_TEXT_PRIMARY,
   },
   symbols: {
     fontSize: 24,
