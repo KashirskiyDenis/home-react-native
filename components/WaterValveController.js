@@ -1,7 +1,6 @@
-import { View, TouchableOpacity } from "react-native";
-import BoolField from "./BoolField";
-import StringField from "./StringField";
-import ValueField from "./ValueField";
+import { View, StyleSheet } from "react-native";
+import BoolRow from "./BoolRow";
+import ValueRow from "./ValueRow";
 
 function WaterValveController({
   navigation,
@@ -9,7 +8,7 @@ function WaterValveController({
   onToggleProperty,
   onPressAction,
 }) {
-  let names = [];
+  const names = [];
   for (let i = 0; i < properties.length; i++) {
     if (properties[i].code.includes("names")) {
       names.push(...properties[i].value.split(";"));
@@ -21,53 +20,62 @@ function WaterValveController({
       {properties.map((property, index) => {
         if (property.code === "use_time") {
           return (
-            <ValueField
+            <ValueRow
               key={index}
-              code={"Время уборки"}
-              value={`${property.value} мин.`}
+              code={property.code}
+              value={property.value}
+              valueStyle={[styles.textBold]}
+              accessory={"edit"}
+              onPress={onPressAction}
             />
           );
         } else if (property.code === "alarm" || property.code === "cleaning") {
           let code = property.code === "alarm" ? "Тревога" : "Уборка";
           return (
-            <BoolField
+            <BoolRow
               key={index}
               code={code}
               value={property.value}
               onValueChange={(newValue) => {
-                onToggleProperty?.(newValue, property.code);
+                onToggleProperty?.(property.code, newValue);
               }}
             />
           );
         } else if (property.code === "journal") {
           return (
-            <TouchableOpacity
+            <ValueRow
               key={index}
+              code={"Журнал"}
+              accessory={"triangle"}
               onPress={() =>
                 navigation.navigate("Journal", { journal: property.value })
               }
-            >
-              <StringField code={"Журнал"} newScreen={true} />
-            </TouchableOpacity>
+            />
           );
         } else if (property.code === "sensors") {
           return (
-            <TouchableOpacity
+            <ValueRow
               key={index}
+              code={"Сенсоры"}
+              accessory={"triangle"}
               onPress={() =>
                 navigation.navigate("Sensors", {
                   sensors: property.value.match(/.{1,4}/g),
                   names,
                 })
               }
-            >
-              <StringField code={"Сенсоры"} newScreen={true} />
-            </TouchableOpacity>
+            />
           );
         }
       })}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  textBold: {
+    fontWeight: "600",
+  },
+});
 
 export default WaterValveController;

@@ -6,16 +6,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { API_KEY, BASE_URL } from "../constants/home";
+import { API_KEY, BASE_URL } from "../constants/api";
 import commonStyles from "../styles/commonStyles";
 
 const HomeScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
-  const [deviceList, setDeviceList] = useState([]);
+  const [devices, setDevices] = useState([]);
   const controllerRef = useRef(null);
   const isMountedRef = useRef(true);
 
-  const updateData = useCallback(async () => {
+  const fetchDevices = useCallback(async () => {
     controllerRef.current?.abort();
 
     const controller = new AbortController();
@@ -40,7 +40,7 @@ const HomeScreen = ({ navigation }) => {
       });
 
       const listDevices = (await response.json()).listDevices;
-      setDeviceList(listDevices);
+      setDevices(listDevices);
     } catch (error) {
       if (error.name === "AbortError") {
         if (isTimeout) {
@@ -68,13 +68,13 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     isMountedRef.current = true;
 
-    updateData();
+    fetchDevices();
 
     return () => {
       isMountedRef.current = false;
       controllerRef.current?.abort();
     };
-  }, [updateData]);
+  }, [fetchDevices]);
 
   return (
     <View style={commonStyles.container}>
@@ -82,22 +82,22 @@ const HomeScreen = ({ navigation }) => {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={() => updateData()}
+            onRefresh={() => fetchDevices()}
           />
         }
       >
-        {deviceList.map((item) => {
+        {devices.map((device) => {
           return (
             <TouchableOpacity
-              key={item.id}
+              key={device.id}
               onPress={() =>
                 navigation.navigate("DeviceDetail", {
-                  device: { ...item },
+                  device,
                 })
               }
               style={commonStyles.listItem}
             >
-              <Text style={commonStyles.listItemText}>{item.name}</Text>
+              <Text style={commonStyles.listItemText}>{device.name}</Text>
             </TouchableOpacity>
           );
         })}

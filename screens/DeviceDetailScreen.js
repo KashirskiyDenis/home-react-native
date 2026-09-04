@@ -7,12 +7,11 @@ import {
   Text,
   View,
 } from "react-native";
-import { API_KEY, BASE_URL } from "../constants/home";
+import { API_KEY, BASE_URL } from "../constants/api";
 import WaterValveController from "../components/WaterValveController";
 import commonStyles from "../styles/commonStyles";
-import BoolField from "../components/BoolField";
-import StringField from "../components/StringField";
-import ValueField from "../components/ValueField";
+import BoolRow from "../components/BoolRow";
+import ValueRow from "../components/ValueRow";
 import PromptModal from "../components/PromptModal";
 
 const DeviceDetailScreen = ({ navigation, route }) => {
@@ -25,7 +24,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
   const controllerRef = useRef(null);
   const isMountedRef = useRef(true);
 
-  const getPropertiesOfDevice = useCallback(async () => {
+  const fetchDeviceProperties = useCallback(async () => {
     controllerRef.current?.abort();
 
     const controller = new AbortController();
@@ -67,19 +66,19 @@ const DeviceDetailScreen = ({ navigation, route }) => {
     }
   }, []);
 
-  const toggleStatus = (newValue, code) => {
+  const updateStatus = (code, value) => {
     setStatuses(
       statuses.map((item) =>
-        item.code === code ? { ...item, value: newValue } : item,
+        item.code === code ? { ...item, value: value } : item,
       ),
     );
   };
 
-  const togglePropertyValue = (newValue, code) => {
+  const updateProperty = (code, value) => {
     setProperties(
       properties.map((property) => {
         return property.code === code
-          ? { ...property, value: newValue }
+          ? { ...property, value: value }
           : property;
       }),
     );
@@ -90,7 +89,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
     setPromptModalVisible(true);
   };
 
-  const changePromptText = () => {
+  const promptSubmit = () => {
     if (promptText.trim().length === 0) {
       return;
     }
@@ -100,12 +99,12 @@ const DeviceDetailScreen = ({ navigation, route }) => {
   useEffect(() => {
     isMountedRef.current = true;
 
-    getPropertiesOfDevice();
+    fetchDeviceProperties();
     return () => {
       isMountedRef.current = false;
       controllerRef.current?.abort();
     };
-  }, [getPropertiesOfDevice]);
+  }, [fetchDeviceProperties]);
 
   return (
     <>
@@ -114,14 +113,14 @@ const DeviceDetailScreen = ({ navigation, route }) => {
         onClose={() => setPromptModalVisible(false)}
         text={promptText}
         onChangeText={setPromptText}
-        onSubmit={changePromptText}
+        onSubmit={promptSubmit}
       />
       <ScrollView
         style={commonStyles.container}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={() => getPropertiesOfDevice()}
+            onRefresh={() => fetchDeviceProperties()}
           />
         }
       >
@@ -131,59 +130,59 @@ const DeviceDetailScreen = ({ navigation, route }) => {
           </Text>
         </View>
 
-        <StringField code={"Название"} value={route.params?.device.name} />
-        <StringField
+        <ValueRow code={"Название"} value={route.params?.device.name} />
+        <ValueRow
           code={"Название продукта"}
           value={route.params?.device.product_name}
         />
-        <StringField
+        <ValueRow
           code={"Интернет статус"}
           value={route.params?.device.online ? "Online" : "Offline"}
-          styleValue={[
+          valueStyle={[
             styles.textBold,
             route.params?.device.online
               ? styles.stateOnline
               : styles.stateOffline,
           ]}
         />
-        <StringField
+        <ValueRow
           code={"Категория"}
           value={route.params?.device.category_title}
         />
         <View style={commonStyles.listItem}>
           <Text style={[commonStyles.listItemSubheaders]}>Статусы</Text>
         </View>
-        {statuses.map((status, indexStatus) => {
+        {statuses.map((status, index) => {
           if (typeof status.value === "number") {
             return (
-              <StringField
-                key={indexStatus}
+              <ValueRow
+                key={index}
                 code={status.code}
                 value={status.value}
-                styleValue={[styles.textBold]}
-                edit={true}
-                onPressAction={openModal}
+                valueStyle={[styles.textBold]}
+                accessory={"edit"}
+                onPress={openModal}
               />
             );
           } else if (typeof status.value === "boolean") {
             return (
-              <BoolField
-                key={indexStatus}
+              <BoolRow
+                key={index}
                 code={"Закрыто / Открыто:"}
                 value={status.value}
                 onValueChange={(newValue) => {
-                  toggleStatus(newValue, status.code);
+                  updateStatus(status.code, newValue);
                 }}
-                onPressAction={changePromptText}
+                onPressAction={promptSubmit}
               />
             );
           } else if (typeof status.value === "string") {
             return (
-              <StringField
-                key={indexStatus}
+              <ValueRow
+                key={index}
                 code={status.code}
                 value={status.value}
-                styleValue={[styles.textBold]}
+                valueStyle={[styles.textBold]}
               />
             );
           }
@@ -194,7 +193,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
         <WaterValveController
           properties={properties}
           navigation={navigation}
-          onToggleProperty={togglePropertyValue}
+          onToggleProperty={updateProperty}
           onPressAction={openModal}
         />
       </ScrollView>

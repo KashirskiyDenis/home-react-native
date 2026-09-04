@@ -1,14 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
 import commonStyles from "../styles/commonStyles";
 
-function StringField({
-  code,
-  value,
-  styleValue,
-  edit = false,
-  newScreen = false,
-  onPressAction,
-}) {
+const ACCESSORY_SYMBOL = {
+  edit: "✎",
+  triangle: "▷",
+};
+function OtherRow({ code, value, accessory, valueStyle, onPress }) {
   return (
     <View style={commonStyles.listItem}>
       <View style={[commonStyles.listItemFlexRow]}>
@@ -16,22 +13,17 @@ function StringField({
           {code}
           <>
             <Text style={commonStyles.listItemText}>: </Text>
-            <Text style={[commonStyles.listItemText, styleValue]}>{value}</Text>
+            <Text style={[commonStyles.listItemText, valueStyle]}>{value}</Text>
           </>
         </Text>
-        {edit && (
+        {accessory && (
           <Text
             style={[commonStyles.listItemText, commonStyles.symbols]}
             accessibilityRole="button"
             accessibilityLabel={`Введите новое значение для свойства ${code}`}
-            onPress={onPressAction}
+            onPress={onPress}
           >
-            &#9998;
-          </Text>
-        )}
-        {newScreen && (
-          <Text style={[commonStyles.listItemText, commonStyles.symbols]}>
-            &#9655;
+            {ACCESSORY_SYMBOL[accessory]}
           </Text>
         )}
       </View>
@@ -39,4 +31,4 @@ function StringField({
   );
 }
 
-export default StringField;
+export default OtherRow;

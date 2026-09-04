@@ -1,17 +1,16 @@
 import { ScrollView, Text, View } from "react-native";
 import commonStyles from "../styles/commonStyles";
-import StringField from "../components/StringField";
+import ValueRow from "../components/ValueRow";
 
 const SensorsScreen = ({ route }) => {
+  const sensors = route.params?.sensors ?? [];
+  const names = route.params?.names ?? [];
+
   return (
     <ScrollView style={commonStyles.container}>
-      {route.params?.sensors.map((sensor, index) => {
+      {sensors.map((sensor, index) => {
         return sensor !== "@~~;" ? (
-          <StringField
-            key={index}
-            code={route.params?.names[index]}
-            value={sensor}
-          />
+          <ValueRow key={index} code={names[index]} value={sensor} />
         ) : null;
       })}
     </ScrollView>

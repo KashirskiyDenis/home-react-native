@@ -5,7 +5,7 @@ import AppStack from "./navigation/AppStack";
 const App = () => {
   return (
     <>
-      <StatusBar barStyle={"dark-content"} />
+      <StatusBar barStyle="dark-content" />
       <NavigationContainer>
         <AppStack />
       </NavigationContainer>

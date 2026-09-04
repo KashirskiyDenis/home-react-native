@@ -1,7 +1,7 @@
 import { StyleSheet, Switch, Text, View } from "react-native";
 import commonStyles from "../styles/commonStyles";
 
-function BoolField({ code, value, onValueChange }) {
+function BoolRow({ code, value, onValueChange }) {
   return (
     <View style={commonStyles.listItem}>
       <View style={commonStyles.listItemFlexRow}>
@@ -12,4 +12,4 @@ function BoolField({ code, value, onValueChange }) {
   );
 }
 
-export default BoolField;
+export default BoolRow;
