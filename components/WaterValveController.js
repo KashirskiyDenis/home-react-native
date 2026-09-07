@@ -22,7 +22,7 @@ function WaterValveController({
           return (
             <ValueRow
               key={index}
-              code={property.code}
+              label={property.code}
               value={property.value}
               valueStyle={[styles.textBold]}
               accessory={"edit"}
@@ -34,7 +34,7 @@ function WaterValveController({
           return (
             <BoolRow
               key={index}
-              code={code}
+              label={code}
               value={property.value}
               onValueChange={(newValue) => {
                 onToggleProperty?.(property.code, newValue);
@@ -45,7 +45,7 @@ function WaterValveController({
           return (
             <ValueRow
               key={index}
-              code={"Журнал"}
+              label={"Журнал"}
               accessory={"triangle"}
               onPress={() =>
                 navigation.navigate("Journal", { journal: property.value })
@@ -56,7 +56,7 @@ function WaterValveController({
           return (
             <ValueRow
               key={index}
-              code={"Сенсоры"}
+              label={"Сенсоры"}
               accessory={"triangle"}
               onPress={() =>
                 navigation.navigate("Sensors", {

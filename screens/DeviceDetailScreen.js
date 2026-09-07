@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { API_KEY, BASE_URL } from "../constants/api";
+import { LABELS } from "../constants/const";
 import WaterValveController from "../components/WaterValveController";
 import commonStyles from "../styles/commonStyles";
 import BoolRow from "../components/BoolRow";
@@ -120,7 +121,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={() => fetchDeviceProperties()}
+            onRefresh={fetchDeviceProperties}
           />
         }
       >
@@ -130,13 +131,13 @@ const DeviceDetailScreen = ({ navigation, route }) => {
           </Text>
         </View>
 
-        <ValueRow code={"Название"} value={route.params?.device.name} />
+        <ValueRow label={"Название"} value={route.params?.device.name} />
         <ValueRow
-          code={"Название продукта"}
+          label={"Название продукта"}
           value={route.params?.device.product_name}
         />
         <ValueRow
-          code={"Интернет статус"}
+          label={"Интернет статус"}
           value={route.params?.device.online ? "Online" : "Offline"}
           valueStyle={[
             styles.textBold,
@@ -146,7 +147,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
           ]}
         />
         <ValueRow
-          code={"Категория"}
+          label={"Категория"}
           value={route.params?.device.category_title}
         />
         <View style={commonStyles.listItem}>
@@ -157,7 +158,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
             return (
               <ValueRow
                 key={index}
-                code={status.code}
+                label={status.code}
                 value={status.value}
                 valueStyle={[styles.textBold]}
                 accessory={"edit"}
@@ -168,7 +169,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
             return (
               <BoolRow
                 key={index}
-                code={"Закрыто / Открыто:"}
+                label={LABELS[status.code]}
                 value={status.value}
                 onValueChange={(newValue) => {
                   updateStatus(status.code, newValue);
@@ -180,7 +181,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
             return (
               <ValueRow
                 key={index}
-                code={status.code}
+                label={status.code}
                 value={status.value}
                 valueStyle={[styles.textBold]}
               />

@@ -80,10 +80,7 @@ const HomeScreen = ({ navigation }) => {
     <View style={commonStyles.container}>
       <ScrollView
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => fetchDevices()}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={fetchDevices} />
         }
       >
         {devices.map((device) => {
