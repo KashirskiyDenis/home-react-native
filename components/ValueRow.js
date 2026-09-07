@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import commonStyles from "../styles/commonStyles";
 import { ACCESSORY_SYMBOL } from "../constants/const";
 
-function OtherRow({ label, value, accessory, valueStyle, onPress }) {
+function ValueRow({ label, value, accessory, valueStyle, onPress }) {
   return (
     <View style={commonStyles.listItem}>
       <View style={[commonStyles.listItemFlexRow]}>
@@ -17,10 +17,10 @@ function OtherRow({ label, value, accessory, valueStyle, onPress }) {
           <Text
             style={[commonStyles.listItemText, commonStyles.symbols]}
             accessibilityRole="button"
-            accessibilityLabel={`Введите новое значение для свойства ${label}`}
+            accessibilityLabel={`${ACCESSORY_SYMBOL[accessory].accessibilityLabel} ${label}`}
             onPress={onPress}
           >
-            {ACCESSORY_SYMBOL[accessory]}
+            {ACCESSORY_SYMBOL[accessory].sysmbol}
           </Text>
         )}
       </View>
@@ -28,4 +28,4 @@ function OtherRow({ label, value, accessory, valueStyle, onPress }) {
   );
 }
 
-export default OtherRow;
+export default ValueRow;

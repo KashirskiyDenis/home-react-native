@@ -97,6 +97,14 @@ const DeviceDetailScreen = ({ navigation, route }) => {
     setPromptModalVisible(false);
   };
 
+  const onJournalPress = (journal) => {
+    navigation.navigate("Journal", { journal: journal });
+  };
+
+  const onSensorPress = (map) => {
+    navigation.navigate("Sensors", { sensors: [...map] });
+  };
+
   useEffect(() => {
     isMountedRef.current = true;
 
@@ -161,7 +169,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
                 label={status.code}
                 value={status.value}
                 valueStyle={[styles.textBold]}
-                accessory={"edit"}
+                accessory="edit"
                 onPress={openModal}
               />
             );
@@ -174,7 +182,6 @@ const DeviceDetailScreen = ({ navigation, route }) => {
                 onValueChange={(newValue) => {
                   updateStatus(status.code, newValue);
                 }}
-                onPressAction={promptSubmit}
               />
             );
           } else if (typeof status.value === "string") {
@@ -183,7 +190,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
                 key={index}
                 label={status.code}
                 value={status.value}
-                valueStyle={[styles.textBold]}
+                valueStyle={styles.textBold}
               />
             );
           }
@@ -194,8 +201,10 @@ const DeviceDetailScreen = ({ navigation, route }) => {
         <WaterValveController
           properties={properties}
           navigation={navigation}
-          onToggleProperty={updateProperty}
+          onPropertyChange={updateProperty}
           onPressAction={openModal}
+          onSensorPress={onSensorPress}
+          onJournalPress={onJournalPress}
         />
       </ScrollView>
     </>

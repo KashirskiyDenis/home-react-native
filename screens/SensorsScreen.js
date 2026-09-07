@@ -3,14 +3,11 @@ import commonStyles from "../styles/commonStyles";
 import ValueRow from "../components/ValueRow";
 
 const SensorsScreen = ({ route }) => {
-  const sensors = route.params?.sensors ?? [];
-  const names = route.params?.names ?? [];
-
   return (
     <ScrollView style={commonStyles.container}>
-      {sensors.map((sensor, index) => {
-        return sensor !== "@~~;" ? (
-          <ValueRow key={index} code={names[index]} value={sensor} />
+      {route.params?.sensors?.map((sensor, index) => {
+        return sensor[1] !== "@~~;" ? (
+          <ValueRow key={index} label={sensor[0]} value={sensor[1]} />
         ) : null;
       })}
     </ScrollView>

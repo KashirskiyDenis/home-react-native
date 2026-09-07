@@ -1,12 +1,15 @@
 import { View, StyleSheet } from "react-native";
 import BoolRow from "./BoolRow";
 import ValueRow from "./ValueRow";
+import { LABELS } from "../constants/const";
+import { parsSensor } from "../utils/utils";
 
 function WaterValveController({
-  navigation,
   properties,
   onToggleProperty,
   onPressAction,
+  onSensorPress,
+  onJournalPress,
 }) {
   const names = [];
   for (let i = 0; i < properties.length; i++) {
@@ -25,12 +28,12 @@ function WaterValveController({
               label={property.code}
               value={property.value}
               valueStyle={[styles.textBold]}
-              accessory={"edit"}
+              accessory="edit"
               onPress={onPressAction}
             />
           );
         } else if (property.code === "alarm" || property.code === "cleaning") {
-          let code = property.code === "alarm" ? "Тревога" : "Уборка";
+          let code = LABELS[property.code];
           return (
             <BoolRow
               key={index}
@@ -45,25 +48,22 @@ function WaterValveController({
           return (
             <ValueRow
               key={index}
-              label={"Журнал"}
-              accessory={"triangle"}
-              onPress={() =>
-                navigation.navigate("Journal", { journal: property.value })
-              }
+              label="Журнал"
+              accessory="navigate"
+              onPress={() => {
+                onJournalPress(property.value);
+              }}
             />
           );
         } else if (property.code === "sensors") {
           return (
             <ValueRow
               key={index}
-              label={"Сенсоры"}
-              accessory={"triangle"}
-              onPress={() =>
-                navigation.navigate("Sensors", {
-                  sensors: property.value.match(/.{1,4}/g),
-                  names,
-                })
-              }
+              label="Сенсоры"
+              accessory="navigate"
+              onPress={() => {
+                onSensorPress(parsSensor(properties));
+              }}
             />
           );
         }

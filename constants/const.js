@@ -1,10 +1,16 @@
 export const ACCESSORY_SYMBOL = {
-  edit: "✎",
-  triangle: "▷",
+  edit: {
+    sysmbol: "✎",
+    accessibilityLabel: "Изменить",
+  },
+  navigate: {
+    sysmbol: "▷",
+    accessibilityLabel: "Открыть",
+  },
 };
 export const LABELS = {
-  alart: "Тревога",
+  alarm: "Тревога",
   cleaning: "Уборка",
-  switch: "Преключатель",
+  switch: "Переключатель",
   use_time: "Время уборки",
 };

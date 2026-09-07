@@ -1,4 +1,4 @@
-import { StyleSheet, Switch, Text, View } from "react-native";
+import { Switch, Text, View } from "react-native";
 import commonStyles from "../styles/commonStyles";
 
 function BoolRow({ label, value, onValueChange }) {
