@@ -1,14 +1,14 @@
-export const ACCESSORY_SYMBOL = {
+export const ACCESSORY_CONFIG = {
   edit: {
-    sysmbol: "✎",
+    symbol: "✎",
     accessibilityLabel: "Изменить",
   },
   navigate: {
-    sysmbol: "▷",
+    symbol: "▷",
     accessibilityLabel: "Открыть",
   },
 };
-export const LABELS = {
+export const DEVICE_PROPERTY_LABELS = {
   alarm: "Тревога",
   cleaning: "Уборка",
   switch: "Переключатель",

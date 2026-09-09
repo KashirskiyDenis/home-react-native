@@ -8,12 +8,13 @@ import {
   View,
 } from "react-native";
 import { API_KEY, BASE_URL } from "../constants/api";
-import { LABELS } from "../constants/const";
+import { DEVICE_PROPERTY_LABELS } from "../constants/const";
 import WaterValveController from "../components/WaterValveController";
 import commonStyles from "../styles/commonStyles";
 import BoolRow from "../components/BoolRow";
 import ValueRow from "../components/ValueRow";
 import PromptModal from "../components/PromptModal";
+import { checkResponse } from "../utils/utils";
 
 const DeviceDetailScreen = ({ navigation, route }) => {
   const [promptModalVisible, setPromptModalVisible] = useState(false);
@@ -40,7 +41,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
     if (isMountedRef.current) setRefreshing(true);
 
     try {
-      const response = await fetch(BASE_URL + "device-detail", {
+      const response = await checkResponse(await fetch(BASE_URL + "device-detail", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,14 +51,30 @@ const DeviceDetailScreen = ({ navigation, route }) => {
           deviceId: route.params?.device.id,
         }),
         signal: controller.signal,
-      });
+      }));
 
-      setProperties((await response.json()).properties);
+      setProperties(response.properties);
     } catch (error) {
-      if (isTimeout) {
-        Alert.alert("Ошибка", "Ошибка сети, проверьте доступ к Tuya Cloud", [
-          { text: "OK" },
-        ]);
+      if (error.name === "AbortError") {
+        if (isTimeout) {
+          Alert.alert(
+            "Ошибка",
+            "Ошибка сети, проверьте доступ к API Yandex.",
+            [{ text: "OK" }],
+          );
+        }
+      } else if (error.name === "Unauthorized") {
+        Alert.alert(
+          "Ошибка",
+          "Ошибка авторизации, проверьте ключ доступа.",
+          [{ text: "OK" }]
+        );
+      } else {
+        Alert.alert(
+          "Ошибка",
+          "Ошибка сети, проверьте подключение с сети Интернет.",
+          [{ text: "OK" }],
+        );
       }
     } finally {
       clearTimeout(timeoutId);
@@ -68,7 +85,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
   }, []);
 
   const updateStatus = (code, value) => {
-    setStatuses(
+    setStatuses(statuses =>
       statuses.map((item) =>
         item.code === code ? { ...item, value: value } : item,
       ),
@@ -76,7 +93,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
   };
 
   const updateProperty = (code, value) => {
-    setProperties(
+    setProperties(properties =>
       properties.map((property) => {
         return property.code === code
           ? { ...property, value: value }
@@ -177,7 +194,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
             return (
               <BoolRow
                 key={index}
-                label={LABELS[status.code]}
+                label={DEVICE_PROPERTY_LABELS[status.code] ?? status.code}
                 value={status.value}
                 onValueChange={(newValue) => {
                   updateStatus(status.code, newValue);
@@ -202,7 +219,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
           properties={properties}
           navigation={navigation}
           onPropertyChange={updateProperty}
-          onPressAction={openModal}
+          onEditPress={openModal}
           onSensorPress={onSensorPress}
           onJournalPress={onJournalPress}
         />

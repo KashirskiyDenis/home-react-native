@@ -1,11 +1,11 @@
 import { Text, View } from "react-native";
 import commonStyles from "../styles/commonStyles";
-import { ACCESSORY_SYMBOL } from "../constants/const";
+import { ACCESSORY_CONFIG } from "../constants/const";
 
 function ValueRow({ label, value, accessory, valueStyle, onPress }) {
   return (
     <View style={commonStyles.listItem}>
-      <View style={[commonStyles.listItemFlexRow]}>
+      <View style={commonStyles.listItemFlexRow}>
         <Text style={commonStyles.listItemText}>
           {label}
           <>
@@ -17,10 +17,10 @@ function ValueRow({ label, value, accessory, valueStyle, onPress }) {
           <Text
             style={[commonStyles.listItemText, commonStyles.symbols]}
             accessibilityRole="button"
-            accessibilityLabel={`${ACCESSORY_SYMBOL[accessory].accessibilityLabel} ${label}`}
+            accessibilityLabel={`${ACCESSORY_CONFIG[accessory].accessibilityLabel} ${label}`}
             onPress={onPress}
           >
-            {ACCESSORY_SYMBOL[accessory].sysmbol}
+            {ACCESSORY_CONFIG[accessory].symbol}
           </Text>
         )}
       </View>

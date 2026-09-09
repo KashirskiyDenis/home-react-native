@@ -3,6 +3,7 @@ import HomeScreen from "../screens/HomeScreen";
 import DeviceDetailScreen from "../screens/DeviceDetailScreen";
 import JournalScreen from "../screens/JournalScreen";
 import SensorsScreen from "../screens/SensorsScreen";
+import { COLOR_BACKGROUND } from "../constants/colors";
 
 const Stack = createNativeStackNavigator();
 
@@ -14,7 +15,7 @@ function AppStack() {
         headerBackTitleVisible: false,
         orientation: "portrait",
         contentStyle: {
-          backgroundColor: "#ffffff",
+          backgroundColor: COLOR_BACKGROUND,
         },
       }}
     >

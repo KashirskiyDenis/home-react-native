@@ -13,7 +13,7 @@ const commonStyles = StyleSheet.create({
     paddingHorizontal: 16,
     height: 48,
     borderBottomWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: COLOR_TEXT_SECONDARY,
     justifyContent: "center",
   },
   listItemFlexRow: {

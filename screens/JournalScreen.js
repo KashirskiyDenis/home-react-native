@@ -3,7 +3,7 @@ import commonStyles from "../styles/commonStyles";
 
 const JournalScreen = ({ route }) => {
   const journal = [];
-  if (route.params?.journal && route.params?.journal.length !== 0)
+  if (route.params?.journal?.length !== 0)
     journal.push(...route.params?.journal.split(";"));
 
   return (

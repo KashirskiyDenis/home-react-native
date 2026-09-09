@@ -1,4 +1,4 @@
-export const parsSensor = (properties) => {
+export const parseSensor = (properties) => {
   const sensors = [];
   const names = [];
 
@@ -7,14 +7,26 @@ export const parsSensor = (properties) => {
       sensors.push(...properties[i].value.match(/.{1,4}/g));
     }
     if (properties[i].code.includes("names")) {
-      names.push(...properties[i].value.split(";"));
+      names.push(...properties[i].value.replace(/;$/, '').split(";"));
     }
   }
 
-  const map = new Map();
+  const map = [];
   for (let i = 0; i < sensors.length; i++) {
-    map.set(names[i], sensors[i]);
+    map.push({ name: names[i], value: sensors[i] });
   }
 
-  return [...map];
+  return map;
+};
+
+export const checkResponse = async (response) => {
+  if (!response.ok) {
+    const error = new Error();
+    if (response.status === 401) error.name = "Unauthorized";
+    else error.name = "NetworkError";
+
+    throw error;
+  }
+
+  return await response.json();
 };
