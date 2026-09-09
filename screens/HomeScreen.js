@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   RefreshControl,
@@ -7,10 +7,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { API_KEY, API_BASE_URL } from "../constants/api";
 import { ERROR_LABELS } from "../constants/const";
 import commonStyles from "../styles/commonStyles";
-import { checkResponse } from "../utils/utils";
+import { apiRequest } from "../utils/utils";
 
 const HomeScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
@@ -23,31 +22,28 @@ const HomeScreen = ({ navigation }) => {
 
     const controller = new AbortController();
     controllerRef.current = controller;
+    let isTimeout = false;
 
     const timeoutId = setTimeout(() => {
+      isTimeout = true;
       controller.abort();
     }, 15000);
 
     if (isMountedRef.current) setRefreshing(true);
 
     try {
-      const response = await checkResponse(
-        await fetch(API_BASE_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-API-Key": API_KEY,
-          },
-          signal: controller.signal,
-        }),
-      );
+      const response = await apiRequest({ signal: controller.signal });
 
       setDevices(response.listDevices);
     } catch (error) {
+      if (error.name === "AbortError" && !isTimeout) return;
+
       Alert.alert(
         "Ошибка",
-        ERROR_LABELS[error.name] ??
-          "Ошибка сети, проверьте подключение с сети Интернет.",
+        isTimeout
+          ? ERROR_LABELS.AbortError
+          : (ERROR_LABELS[error.name] ??
+              "Ошибка сети, проверьте подключение с сети Интернет."),
         [{ text: "OK" }],
       );
     } finally {

@@ -1,9 +1,9 @@
 import { StyleSheet } from "react-native";
 import {
   COLOR_ACCENT,
+  COLOR_BUTTON_PRESSED,
   COLOR_TEXT_PRIMARY,
   COLOR_TEXT_SECONDARY,
-  COLOR_BUTTON_PRESSED,
 } from "../constants/colors";
 
 const commonStyles = StyleSheet.create({

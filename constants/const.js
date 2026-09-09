@@ -18,7 +18,7 @@ export const DEVICE_PROPERTY_LABELS = {
 };
 
 export const ERROR_LABELS = {
-  AbortError: "Превышено время ожидание ответа.",
+  AbortError: "Превышено время ожидания ответа.",
   ServerError: "Проверьте доступ к API Yandex.",
   Unauthorized: "Ошибка авторизации, проверьте ключ доступа.",
   HttpError: "Ошибка получения данных, попробуйте ещё раз.",

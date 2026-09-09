@@ -1,4 +1,4 @@
-import { View, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import BoolRow from "./BoolRow";
 import ValueRow from "./ValueRow";
 import { DEVICE_PROPERTY_LABELS } from "../constants/const";

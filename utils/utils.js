@@ -1,3 +1,5 @@
+import { API_KEY, API_BASE_URL } from "../constants/api";
+
 export const parseSensors = (properties) => {
   const sensors = [];
   const names = [];
@@ -33,29 +35,18 @@ export const checkResponse = async (response) => {
   return await response.json();
 };
 
-export const getRequestErrorMessage = (error) => {
-  if (error.name === "AbortError" || error.name === "ServerError") {
-    if (isTimeout) {
-      Alert.alert("Ошибка",
-        "Ошибка сети, проверьте доступ к API Yandex.", [
-        { text: "OK" },
-      ]);
-    }
-  } else if (error.name === "Unauthorized") {
-    Alert.alert("Ошибка",
-      "Ошибка авторизации, проверьте ключ доступа.", [
-      { text: "OK" },
-    ]);
-  } else if (error.name === "HttpError") {
-    Alert.alert("Ошибка",
-      "Ошибка получения данных, попробуйте ещё раз.", [
-      { text: "OK" },
-    ]);
-  } else {
-    Alert.alert(
-      "Ошибка",
-      "Ошибка сети, проверьте подключение с сети Интернет.",
-      [{ text: "OK" }],
-    );
-  }
+export const apiRequest = async ({ endpoint = "", body, signal }) => {
+  const response = await checkResponse(
+    await fetch(API_BASE_URL + endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": API_KEY,
+      },
+      body : JSON.stringify(body),
+      signal,
+    }),
+  );
+
+  return response;
 };

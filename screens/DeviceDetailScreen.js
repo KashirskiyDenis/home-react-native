@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   RefreshControl,
@@ -7,14 +7,13 @@ import {
   Text,
   View,
 } from "react-native";
-import { API_KEY, API_BASE_URL } from "../constants/api";
 import { DEVICE_PROPERTY_LABELS } from "../constants/const";
 import WaterValveController from "../components/WaterValveController";
-import commonStyles from "../styles/commonStyles";
 import BoolRow from "../components/BoolRow";
 import ValueRow from "../components/ValueRow";
 import PromptModal from "../components/PromptModal";
-import { checkResponse } from "../utils/utils";
+import commonStyles from "../styles/commonStyles";
+import { apiRequest } from "../utils/utils";
 
 const DeviceDetailScreen = ({ navigation, route }) => {
   const device = route.params?.device;
@@ -32,34 +31,34 @@ const DeviceDetailScreen = ({ navigation, route }) => {
 
     const controller = new AbortController();
     controllerRef.current = controller;
+    let isTimeout = false;
 
     const timeoutId = setTimeout(() => {
+      isTimeout = true;
       controller.abort();
     }, 15000);
 
     if (isMountedRef.current) setRefreshing(true);
 
     try {
-      const response = await checkResponse(
-        await fetch(API_BASE_URL + "device-detail", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-API-Key": API_KEY,
-          },
-          body: JSON.stringify({
-            deviceId: device.id,
-          }),
-          signal: controller.signal,
-        }),
-      );
+      const response = await apiRequest({
+        endpoint: "device-detail",
+        body: {
+          deviceId: device.id,
+        },
+        signal: controller.signal,
+      });
 
       setProperties(response.properties);
     } catch (error) {
+      if (error.name === "AbortError" && !isTimeout) return;
+
       Alert.alert(
         "Ошибка",
-        ERROR_LABELS[error.name] ??
-          "Ошибка сети, проверьте подключение с сети Интернет.",
+        isTimeout
+          ? ERROR_LABELS.AbortError
+          : (ERROR_LABELS[error.name] ??
+              "Ошибка сети, проверьте подключение к сети Интернет."),
         [{ text: "OK" }],
       );
     } finally {

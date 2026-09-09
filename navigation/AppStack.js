@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomeScreen from "../screens/HomeScreen";
 import DeviceDetailScreen from "../screens/DeviceDetailScreen";
+import HomeScreen from "../screens/HomeScreen";
 import JournalScreen from "../screens/JournalScreen";
 import SensorsScreen from "../screens/SensorsScreen";
 import { COLOR_BACKGROUND } from "../constants/colors";
