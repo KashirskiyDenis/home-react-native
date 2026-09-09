@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { API_KEY, BASE_URL } from "../constants/api";
+import { API_KEY, API_BASE_URL } from "../constants/api";
 import { DEVICE_PROPERTY_LABELS } from "../constants/const";
 import WaterValveController from "../components/WaterValveController";
 import commonStyles from "../styles/commonStyles";
@@ -22,7 +22,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
   const [promptText, setPromptText] = useState("");
 
   const [refreshing, setRefreshing] = useState(false);
-  const [statuses, setStatuses] = useState(route.params?.device.status);
+  const [statuses, setStatuses] = useState(route.params?.device.status ?? []);
   const [properties, setProperties] = useState([]);
   const controllerRef = useRef(null);
   const isMountedRef = useRef(true);
@@ -32,10 +32,8 @@ const DeviceDetailScreen = ({ navigation, route }) => {
 
     const controller = new AbortController();
     controllerRef.current = controller;
-    let isTimeout = false;
 
     const timeoutId = setTimeout(() => {
-      isTimeout = true;
       controller.abort();
     }, 15000);
 
@@ -43,7 +41,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
 
     try {
       const response = await checkResponse(
-        await fetch(BASE_URL + "device-detail", {
+        await fetch(API_BASE_URL + "device-detail", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -58,30 +56,12 @@ const DeviceDetailScreen = ({ navigation, route }) => {
 
       setProperties(response.properties);
     } catch (error) {
-      if (error.name === "AbortError" || error.name === "ServerError") {
-        if (isTimeout) {
-          Alert.alert("Ошибка",
-            "Ошибка сети, проверьте доступ к API Yandex.", [
-            { text: "OK" },
-          ]);
-        }
-      } else if (error.name === "Unauthorized") {
-        Alert.alert("Ошибка",
-          "Ошибка авторизации, проверьте ключ доступа.", [
-          { text: "OK" },
-        ]);
-      } else if (error.name === "HttpError") {
-        Alert.alert("Ошибка",
-          "Ошибка получения данных, попробуйте ещё раз.", [
-          { text: "OK" },
-        ]);
-      } else {
-        Alert.alert(
-          "Ошибка",
+      Alert.alert(
+        "Ошибка",
+        ERROR_LABELS[error.name] ??
           "Ошибка сети, проверьте подключение с сети Интернет.",
-          [{ text: "OK" }],
-        );
-      }
+        [{ text: "OK" }],
+      );
     } finally {
       clearTimeout(timeoutId);
       if (isMountedRef.current && controllerRef.current === controller) {

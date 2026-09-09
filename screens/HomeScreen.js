@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { API_KEY, BASE_URL } from "../constants/api";
+import { API_KEY, API_BASE_URL } from "../constants/api";
+import { ERROR_LABELS } from "../constants/const";
 import commonStyles from "../styles/commonStyles";
 import { checkResponse } from "../utils/utils";
 
@@ -22,51 +23,33 @@ const HomeScreen = ({ navigation }) => {
 
     const controller = new AbortController();
     controllerRef.current = controller;
-    let isTimeout = false;
 
     const timeoutId = setTimeout(() => {
-      isTimeout = true;
       controller.abort();
     }, 15000);
 
     if (isMountedRef.current) setRefreshing(true);
 
     try {
-      const response = await checkResponse(await fetch(BASE_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-Key": API_KEY,
-        },
-        signal: controller.signal,
-      }));
+      const response = await checkResponse(
+        await fetch(API_BASE_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-Key": API_KEY,
+          },
+          signal: controller.signal,
+        }),
+      );
 
       setDevices(response.listDevices);
     } catch (error) {
-      if (error.name === "AbortError" || error.name === "ServerError") {
-        if (isTimeout) {
-          Alert.alert("Ошибка",
-            "Ошибка сети, проверьте доступ к API Yandex.", [
-            { text: "OK" },
-          ]);
-        }
-      } else if (error.name === "Unauthorized") {
-        Alert.alert("Ошибка",
-          "Ошибка авторизации, проверьте ключ доступа.", [
-          { text: "OK" },
-        ]);
-      } else if (error.name === "HttpError") {
-        Alert.alert("Ошибка",
-          "Ошибка получения данных, попробуйте ещё раз.", [
-          { text: "OK" },
-        ]);
-      } else {
-        Alert.alert(
-          "Ошибка",
+      Alert.alert(
+        "Ошибка",
+        ERROR_LABELS[error.name] ??
           "Ошибка сети, проверьте подключение с сети Интернет.",
-          [{ text: "OK" }],
-        );
-      }
+        [{ text: "OK" }],
+      );
     } finally {
       clearTimeout(timeoutId);
       if (isMountedRef.current && controllerRef.current === controller) {
