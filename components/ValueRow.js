@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import commonStyles from "../styles/commonStyles";
 import { ACCESSORY_CONFIG } from "../constants/const";
 
@@ -14,14 +14,15 @@ function ValueRow({ label, value, accessory, valueStyle, onPress }) {
           </>
         </Text>
         {accessory && (
-          <Text
-            style={[commonStyles.listItemText, commonStyles.symbols]}
+          <Pressable
             accessibilityRole="button"
             accessibilityLabel={`${ACCESSORY_CONFIG[accessory].accessibilityLabel} ${label}`}
             onPress={onPress}
           >
-            {ACCESSORY_CONFIG[accessory].symbol}
-          </Text>
+            <Text style={[commonStyles.listItemText, commonStyles.symbols]}>
+              {ACCESSORY_CONFIG[accessory].symbol}
+            </Text>
+          </Pressable>
         )}
       </View>
     </View>

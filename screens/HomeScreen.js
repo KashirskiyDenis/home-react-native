@@ -43,20 +43,23 @@ const HomeScreen = ({ navigation }) => {
 
       setDevices(response.listDevices);
     } catch (error) {
-      if (error.name === "AbortError") {
+      if (error.name === "AbortError" || error.name === "ServerError") {
         if (isTimeout) {
-          Alert.alert(
-            "Ошибка",
-            "Ошибка сети, проверьте доступ к API Yandex.",
-            [{ text: "OK" }],
-          );
+          Alert.alert("Ошибка",
+            "Ошибка сети, проверьте доступ к API Yandex.", [
+            { text: "OK" },
+          ]);
         }
       } else if (error.name === "Unauthorized") {
-        Alert.alert(
-          "Ошибка",
-          "Ошибка авторизации, проверьте ключ доступа.",
-          [{ text: "OK" }]
-        );
+        Alert.alert("Ошибка",
+          "Ошибка авторизации, проверьте ключ доступа.", [
+          { text: "OK" },
+        ]);
+      } else if (error.name === "HttpError") {
+        Alert.alert("Ошибка",
+          "Ошибка получения данных, попробуйте ещё раз.", [
+          { text: "OK" },
+        ]);
       } else {
         Alert.alert(
           "Ошибка",

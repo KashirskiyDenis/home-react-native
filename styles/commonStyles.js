@@ -3,6 +3,7 @@ import {
   COLOR_ACCENT,
   COLOR_TEXT_PRIMARY,
   COLOR_TEXT_SECONDARY,
+  COLOR_BUTTON_PRESSED,
 } from "../constants/colors";
 
 const commonStyles = StyleSheet.create({
@@ -13,7 +14,7 @@ const commonStyles = StyleSheet.create({
     paddingHorizontal: 16,
     height: 48,
     borderBottomWidth: 1,
-    borderColor: COLOR_TEXT_SECONDARY,
+    borderColor: COLOR_BUTTON_PRESSED,
     justifyContent: "center",
   },
   listItemFlexRow: {

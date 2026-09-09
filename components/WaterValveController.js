@@ -2,7 +2,7 @@ import { View, StyleSheet } from "react-native";
 import BoolRow from "./BoolRow";
 import ValueRow from "./ValueRow";
 import { DEVICE_PROPERTY_LABELS } from "../constants/const";
-import { parseSensor } from "../utils/utils";
+import { parseSensors } from "../utils/utils";
 
 function WaterValveController({
   properties,
@@ -13,52 +13,56 @@ function WaterValveController({
 }) {
   return (
     <View>
-      {properties.map((property, index) => {
+      {properties.map((property) => {
         if (property.code === "use_time") {
           return (
             <ValueRow
-              key={index}
-              label={property.code}
+              key={property.code}
+              label={DEVICE_PROPERTY_LABELS[property.code] ?? property.code}
               value={property.value}
-              valueStyle={[styles.textBold]}
+              valueStyle={styles.textBold}
               accessory="edit"
               onPress={onEditPress}
             />
           );
-        } else if (property.code === "alarm" || property.code === "cleaning") {
+        }
+        if (property.code === "alarm" || property.code === "cleaning") {
           return (
             <BoolRow
-              key={index}
-              label={DEVICE_PROPERTY_LABELS[property.code]}
+              key={property.code}
+              label={DEVICE_PROPERTY_LABELS[property.code] ?? property.code}
               value={property.value}
               onValueChange={(newValue) => {
                 onPropertyChange?.(property.code, newValue);
               }}
             />
           );
-        } else if (property.code === "journal") {
+        }
+        if (property.code === "journal") {
           return (
             <ValueRow
-              key={index}
-              label="Журнал"
+              key={property.code}
+              label={DEVICE_PROPERTY_LABELS[property.code] ?? property.code}
               accessory="navigate"
               onPress={() => {
                 onJournalPress(property.value);
               }}
             />
           );
-        } else if (property.code === "sensors") {
+        }
+        if (property.code === "sensors") {
           return (
             <ValueRow
-              key={index}
-              label="Сенсоры"
+              key={property.code}
+              label={DEVICE_PROPERTY_LABELS[property.code] ?? property.code}
               accessory="navigate"
               onPress={() => {
-                onSensorPress(parseSensor(properties));
+                onSensorPress(parseSensors(properties));
               }}
             />
           );
         }
+        return null;
       })}
     </View>
   );

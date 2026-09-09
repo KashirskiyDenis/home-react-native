@@ -13,4 +13,6 @@ export const DEVICE_PROPERTY_LABELS = {
   cleaning: "Уборка",
   switch: "Переключатель",
   use_time: "Время уборки",
+  journal: "Журнал",
+  sensors: "Сенсоры",
 };

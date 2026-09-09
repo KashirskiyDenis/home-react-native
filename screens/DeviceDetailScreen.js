@@ -17,6 +17,7 @@ import PromptModal from "../components/PromptModal";
 import { checkResponse } from "../utils/utils";
 
 const DeviceDetailScreen = ({ navigation, route }) => {
+  const device = route.params?.device;
   const [promptModalVisible, setPromptModalVisible] = useState(false);
   const [promptText, setPromptText] = useState("");
 
@@ -41,34 +42,39 @@ const DeviceDetailScreen = ({ navigation, route }) => {
     if (isMountedRef.current) setRefreshing(true);
 
     try {
-      const response = await checkResponse(await fetch(BASE_URL + "device-detail", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-API-Key": API_KEY,
-        },
-        body: JSON.stringify({
-          deviceId: route.params?.device.id,
+      const response = await checkResponse(
+        await fetch(BASE_URL + "device-detail", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-Key": API_KEY,
+          },
+          body: JSON.stringify({
+            deviceId: device.id,
+          }),
+          signal: controller.signal,
         }),
-        signal: controller.signal,
-      }));
+      );
 
       setProperties(response.properties);
     } catch (error) {
-      if (error.name === "AbortError") {
+      if (error.name === "AbortError" || error.name === "ServerError") {
         if (isTimeout) {
-          Alert.alert(
-            "Ошибка",
-            "Ошибка сети, проверьте доступ к API Yandex.",
-            [{ text: "OK" }],
-          );
+          Alert.alert("Ошибка",
+            "Ошибка сети, проверьте доступ к API Yandex.", [
+            { text: "OK" },
+          ]);
         }
       } else if (error.name === "Unauthorized") {
-        Alert.alert(
-          "Ошибка",
-          "Ошибка авторизации, проверьте ключ доступа.",
-          [{ text: "OK" }]
-        );
+        Alert.alert("Ошибка",
+          "Ошибка авторизации, проверьте ключ доступа.", [
+          { text: "OK" },
+        ]);
+      } else if (error.name === "HttpError") {
+        Alert.alert("Ошибка",
+          "Ошибка получения данных, попробуйте ещё раз.", [
+          { text: "OK" },
+        ]);
       } else {
         Alert.alert(
           "Ошибка",
@@ -85,7 +91,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
   }, []);
 
   const updateStatus = (code, value) => {
-    setStatuses(statuses =>
+    setStatuses((statuses) =>
       statuses.map((item) =>
         item.code === code ? { ...item, value: value } : item,
       ),
@@ -93,7 +99,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
   };
 
   const updateProperty = (code, value) => {
-    setProperties(properties =>
+    setProperties((properties) =>
       properties.map((property) => {
         return property.code === code
           ? { ...property, value: value }
@@ -156,34 +162,26 @@ const DeviceDetailScreen = ({ navigation, route }) => {
           </Text>
         </View>
 
-        <ValueRow label={"Название"} value={route.params?.device.name} />
-        <ValueRow
-          label={"Название продукта"}
-          value={route.params?.device.product_name}
-        />
+        <ValueRow label={"Название"} value={device.name} />
+        <ValueRow label={"Название продукта"} value={device.product_name} />
         <ValueRow
           label={"Интернет статус"}
-          value={route.params?.device.online ? "Online" : "Offline"}
+          value={device.online ? "Online" : "Offline"}
           valueStyle={[
             styles.textBold,
-            route.params?.device.online
-              ? styles.stateOnline
-              : styles.stateOffline,
+            device.online ? styles.stateOnline : styles.stateOffline,
           ]}
         />
-        <ValueRow
-          label={"Категория"}
-          value={route.params?.device.category_title}
-        />
+        <ValueRow label={"Категория"} value={device.category_title} />
         <View style={commonStyles.listItem}>
           <Text style={[commonStyles.listItemSubheaders]}>Статусы</Text>
         </View>
-        {statuses.map((status, index) => {
+        {statuses.map((status) => {
           if (typeof status.value === "number") {
             return (
               <ValueRow
-                key={index}
-                label={status.code}
+                key={status.code}
+                label={DEVICE_PROPERTY_LABELS[status.code] ?? status.code}
                 value={status.value}
                 valueStyle={[styles.textBold]}
                 accessory="edit"
@@ -193,7 +191,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
           } else if (typeof status.value === "boolean") {
             return (
               <BoolRow
-                key={index}
+                key={status.code}
                 label={DEVICE_PROPERTY_LABELS[status.code] ?? status.code}
                 value={status.value}
                 onValueChange={(newValue) => {
@@ -204,8 +202,8 @@ const DeviceDetailScreen = ({ navigation, route }) => {
           } else if (typeof status.value === "string") {
             return (
               <ValueRow
-                key={index}
-                label={status.code}
+                key={status.code}
+                label={DEVICE_PROPERTY_LABELS[status.code] ?? status.code}
                 value={status.value}
                 valueStyle={styles.textBold}
               />
@@ -217,7 +215,6 @@ const DeviceDetailScreen = ({ navigation, route }) => {
         </View>
         <WaterValveController
           properties={properties}
-          navigation={navigation}
           onPropertyChange={updateProperty}
           onEditPress={openModal}
           onSensorPress={onSensorPress}

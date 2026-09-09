@@ -5,9 +5,9 @@ import ValueRow from "../components/ValueRow";
 const SensorsScreen = ({ route }) => {
   return (
     <ScrollView style={commonStyles.container}>
-      {route.params?.sensors?.map((sensor, index) => {
+      {route.params?.sensors?.map((sensor) => {
         return sensor.value !== "@~~;" ? (
-          <ValueRow key={index} label={sensor.name} value={sensor.value} />
+          <ValueRow key={sensor.name} label={sensor.name} value={sensor.value} />
         ) : null;
       })}
     </ScrollView>
