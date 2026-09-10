@@ -7,10 +7,12 @@ export const parseSensors = (properties) => {
 
   for (let i = 0; i < properties.length; i++) {
     if (properties[i].code.includes("sensors")) {
-      sensors.push(...properties[i].value.match(/.{1,4}/g));
+      sensors.push(...(properties[i].value.match(/.{1,4}/g) ?? []));
     }
     if (properties[i].code.includes("names")) {
-      names.push(...properties[i].value.replace(/;$/, "").split(";"));
+      names.push(
+        ...properties[i].value.replace(/;$/, "").split(";").filter(Bollean),
+      );
     }
   }
 
@@ -43,7 +45,7 @@ export const apiRequest = async ({ endpoint = "", body, signal }) => {
         "Content-Type": "application/json",
         "X-API-Key": API_KEY,
       },
-      body : JSON.stringify(body),
+      body: JSON.stringify(body),
       signal,
     }),
   );

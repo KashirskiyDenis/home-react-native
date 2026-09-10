@@ -3,8 +3,9 @@ import commonStyles from "../styles/commonStyles";
 
 const JournalScreen = ({ route }) => {
   const journal = [];
-  if (route.params?.journal?.length !== 0)
-    journal.push(...route.params?.journal.split(";"));
+
+  if (route.params?.journal?.length > 0)
+    journal.push(...route.params.journal.split(";"));
 
   return (
     <ScrollView style={commonStyles.container}>

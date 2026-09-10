@@ -17,6 +17,7 @@ import { apiRequest } from "../utils/utils";
 
 const DeviceDetailScreen = ({ navigation, route }) => {
   const device = route.params?.device;
+  const deviceId = device?.id;
   const [promptModalVisible, setPromptModalVisible] = useState(false);
   const [promptText, setPromptText] = useState("");
 
@@ -44,7 +45,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
       const response = await apiRequest({
         endpoint: "device-detail",
         body: {
-          deviceId: device.id,
+          deviceId: deviceId,
         },
         signal: controller.signal,
       });
@@ -67,7 +68,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
         setRefreshing(false);
       }
     }
-  }, []);
+  }, [deviceId]);
 
   const updateStatus = (code, value) => {
     setStatuses((statuses) =>
