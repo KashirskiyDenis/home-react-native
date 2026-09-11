@@ -1,7 +1,7 @@
 import { Switch, Text, View } from "react-native";
 import commonStyles from "../styles/commonStyles";
 
-function BoolRow({ label, value, onValueChange }) {
+const BoolRow = ({ label, value, onValueChange }) => {
   return (
     <View style={commonStyles.listItem}>
       <View style={commonStyles.listItemFlexRow}>
@@ -10,6 +10,6 @@ function BoolRow({ label, value, onValueChange }) {
       </View>
     </View>
   );
-}
+};
 
 export default BoolRow;

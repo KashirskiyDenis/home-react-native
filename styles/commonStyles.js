@@ -36,6 +36,9 @@ const commonStyles = StyleSheet.create({
     paddingRight: 3,
     color: COLOR_ACCENT,
   },
+  textBold: {
+    fontWeight: "600",
+  },
 });
 
 export default commonStyles;

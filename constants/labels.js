@@ -22,4 +22,7 @@ export const ERROR_LABELS = {
   ServerError: "Проверьте доступ к API Yandex.",
   Unauthorized: "Ошибка авторизации, проверьте ключ доступа.",
   HttpError: "Ошибка получения данных, попробуйте ещё раз.",
+  NetworkError: "Ошибка сети, проверьте подключение с сети Интернет."
 };
+
+export const SENSOR_EMPTY_VALUE = "@~~;";

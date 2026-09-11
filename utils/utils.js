@@ -11,7 +11,7 @@ export const parseSensors = (properties) => {
     }
     if (properties[i].code.includes("names")) {
       names.push(
-        ...properties[i].value.replace(/;$/, "").split(";").filter(Bollean),
+        ...properties[i].value.replace(/;$/, "").split(";").filter(Boolean),
       );
     }
   }

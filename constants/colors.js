@@ -8,3 +8,5 @@ export const COLOR_BUTTON_TEXT_PLACEHOLDER = "rgba(0, 0, 0, 0.42)";
 export const COLOR_BUTTON_TEXT_DISABLED = "rgba(0, 0, 0, 0.26)";
 export const COLOR_BUTTON_PRESSED = "rgba(0, 0, 0, 0.12)";
 export const COLOR_SCRIM = "rgba(0, 0, 0, 0.6)";
+export const COLOR_STATE_ONLINE  = "#00ff00";
+export const COLOR_STATE_OFFLINE = "#ff0000";

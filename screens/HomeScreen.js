@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { ERROR_LABELS } from "../constants/const";
+import { ERROR_LABELS } from "../constants/labels";
 import commonStyles from "../styles/commonStyles";
 import { apiRequest } from "../utils/utils";
 
@@ -42,8 +42,7 @@ const HomeScreen = ({ navigation }) => {
         "Ошибка",
         isTimeout
           ? ERROR_LABELS.AbortError
-          : (ERROR_LABELS[error.name] ??
-              "Ошибка сети, проверьте подключение с сети Интернет."),
+          : (ERROR_LABELS[error.name] ?? ERROR_LABELS.NetworkError),
         [{ text: "OK" }],
       );
     } finally {

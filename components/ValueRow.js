@@ -1,8 +1,8 @@
 import { Pressable, Text, View } from "react-native";
 import commonStyles from "../styles/commonStyles";
-import { ACCESSORY_CONFIG } from "../constants/const";
+import { ACCESSORY_CONFIG } from "../constants/labels";
 
-function ValueRow({ label, value, accessory, valueStyle, onPress }) {
+const ValueRow = ({ label, value, accessory, valueStyle, onPress })=> {
   return (
     <View style={commonStyles.listItem}>
       <View style={commonStyles.listItemFlexRow}>

@@ -14,7 +14,7 @@ import {
 } from "../constants/colors";
 import modalStyles from "../styles/modalStyles";
 
-function PromptModal({ visible, onClose, text, onChangeText, onSubmit }) {
+const PromptModal = ({ visible, onClose, text, onChangeText, onSubmit }) => {
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -80,6 +80,6 @@ function PromptModal({ visible, onClose, text, onChangeText, onSubmit }) {
       </KeyboardAvoidingView>
     </Modal>
   );
-}
+};
 
 export default PromptModal;

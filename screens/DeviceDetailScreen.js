@@ -7,7 +7,8 @@ import {
   Text,
   View,
 } from "react-native";
-import { DEVICE_PROPERTY_LABELS } from "../constants/const";
+import { COLOR_STATE_ONLINE, COLOR_STATE_OFFLINE } from "../constants/colors";
+import { DEVICE_PROPERTY_LABELS, ERROR_LABELS } from "../constants/labels";
 import WaterValveController from "../components/WaterValveController";
 import BoolRow from "../components/BoolRow";
 import ValueRow from "../components/ValueRow";
@@ -58,8 +59,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
         "Ошибка",
         isTimeout
           ? ERROR_LABELS.AbortError
-          : (ERROR_LABELS[error.name] ??
-              "Ошибка сети, проверьте подключение к сети Интернет."),
+          : (ERROR_LABELS[error.name] ?? ERROR_LABELS.NetworkError),
         [{ text: "OK" }],
       );
     } finally {
@@ -148,7 +148,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
           label={"Интернет статус"}
           value={device.online ? "Online" : "Offline"}
           valueStyle={[
-            styles.textBold,
+            commonStyles.textBold,
             device.online ? styles.stateOnline : styles.stateOffline,
           ]}
         />
@@ -163,7 +163,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
                 key={status.code}
                 label={DEVICE_PROPERTY_LABELS[status.code] ?? status.code}
                 value={status.value}
-                valueStyle={[styles.textBold]}
+                valueStyle={commonStyles.textBold}
                 accessory="edit"
                 onPress={openModal}
               />
@@ -185,7 +185,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
                 key={status.code}
                 label={DEVICE_PROPERTY_LABELS[status.code] ?? status.code}
                 value={status.value}
-                valueStyle={styles.textBold}
+                valueStyle={commonStyles.textBold}
               />
             );
           }
@@ -207,13 +207,10 @@ const DeviceDetailScreen = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   stateOnline: {
-    color: "#00ff00",
+    color: COLOR_STATE_ONLINE,
   },
   stateOffline: {
-    color: "#ff0000",
-  },
-  textBold: {
-    fontWeight: "600",
+    color: COLOR_STATE_OFFLINE,
   },
 });
 

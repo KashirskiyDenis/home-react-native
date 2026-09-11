@@ -1,16 +1,17 @@
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import BoolRow from "./BoolRow";
 import ValueRow from "./ValueRow";
-import { DEVICE_PROPERTY_LABELS } from "../constants/const";
+import { DEVICE_PROPERTY_LABELS } from "../constants/labels";
+import commonStyles from "../styles/commonStyles";
 import { parseSensors } from "../utils/utils";
 
-function WaterValveController({
+const WaterValveController = ({
   properties,
   onPropertyChange,
   onEditPress,
   onSensorPress,
   onJournalPress,
-}) {
+}) => {
   return (
     <View>
       {properties.map((property) => {
@@ -20,7 +21,7 @@ function WaterValveController({
               key={property.code}
               label={DEVICE_PROPERTY_LABELS[property.code] ?? property.code}
               value={property.value}
-              valueStyle={styles.textBold}
+              valueStyle={commonStyles.textBold}
               accessory="edit"
               onPress={onEditPress}
             />
@@ -66,12 +67,6 @@ function WaterValveController({
       })}
     </View>
   );
-}
-
-const styles = StyleSheet.create({
-  textBold: {
-    fontWeight: "600",
-  },
-});
+};
 
 export default WaterValveController;
