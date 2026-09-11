@@ -70,6 +70,33 @@ const DeviceDetailScreen = ({ navigation, route }) => {
     }
   }, [deviceId]);
 
+  const updateDeviceStatus = async (deviceId, statusCode, newValue) => {
+    try {
+      const response = await apiRequest({
+        endpoint: "set-status",
+        body: {
+          deviceId: deviceId,
+          code: statusCode,
+          value: newValue,
+        },
+        // signal: controller.signal,
+      });
+
+    } catch (error) {
+      setRefreshing(false);
+
+      if (error.name === "AbortError") return;
+
+      Alert.alert(
+        "Ошибка",
+        isTimeout
+          ? ERROR_LABELS.AbortError
+          : (ERROR_LABELS[error.name] ?? ERROR_LABELS.NetworkError),
+        [{ text: "OK" }],
+      );
+    }
+  };
+
   const updateStatus = (code, value) => {
     setStatuses((statuses) =>
       statuses.map((item) =>
@@ -174,8 +201,11 @@ const DeviceDetailScreen = ({ navigation, route }) => {
                 key={status.code}
                 label={DEVICE_PROPERTY_LABELS[status.code] ?? status.code}
                 value={status.value}
-                onValueChange={(newValue) => {
+                onValueChange={async (newValue) => {
+                  setRefreshing(true);
+                  await updateDeviceStatus(deviceId, status.code, newValue);
                   updateStatus(status.code, newValue);
+                  setRefreshing(false);
                 }}
               />
             );

@@ -2,10 +2,8 @@ import { ScrollView, Text, View } from "react-native";
 import commonStyles from "../styles/commonStyles";
 
 const JournalScreen = ({ route }) => {
-  const journal = [];
-
-  if (route.params?.journal?.length > 0)
-    journal.push(...route.params.journal.split(";"));
+  const journal =
+    route.params?.journal?.length > 0 ? route.params.journal.split(";") : [];
 
   return (
     <ScrollView style={commonStyles.container}>
