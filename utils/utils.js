@@ -1,4 +1,6 @@
+import { Alert } from "react-native";
 import { API_KEY, API_BASE_URL } from "../constants/api";
+import { ERROR_LABELS, TUYA_ERRORS } from "../constants/labels";
 
 export const parseSensors = (properties) => {
   const sensors = [];
@@ -23,18 +25,20 @@ export const parseSensors = (properties) => {
   return result;
 };
 
-export const checkResponse = async (response) => {
-  if (!response.ok) {
-    const error = new Error();
-    if (response.status === 401) error.name = "Unauthorized";
-    else if (response.status === 501 || response.status === 503)
-      error.name = "ServerError";
-    else error.name = "HttpError";
+function throwError(name, message) {
+  const error = new Error(message);
+  error.name = name;
+  throw error;
+}
 
-    throw error;
+export const checkResponse = async (response) => {
+  const data = await response.json();
+
+  if (!response.ok) {
+    throwError(data.error, data.message);
   }
 
-  return await response.json();
+  return data;
 };
 
 export const apiRequest = async ({ endpoint = "", body, signal }) => {
@@ -51,4 +55,18 @@ export const apiRequest = async ({ endpoint = "", body, signal }) => {
   );
 
   return response;
+};
+
+export const handleError = (error, isTimeout) => {
+  if (error.name === "AbortError" && !isTimeout) return;
+
+  Alert.alert(
+    "Ошибка",
+    isTimeout
+      ? ERROR_LABELS.AbortError
+      : error.name === "TuyaError"
+        ? TUYA_ERRORS[`errorCode_${error.message}`].ErrorMessage
+        : (ERROR_LABELS[error.name] ?? ERROR_LABELS.NetworkError),
+    [{ text: "OK" }],
+  );
 };

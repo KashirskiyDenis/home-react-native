@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  Alert,
   RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { ERROR_LABELS } from "../constants/labels";
+import { ENDPOINTS, ABORT_TIMEOUT_MS } from "../constants/api";
 import commonStyles from "../styles/commonStyles";
-import { apiRequest } from "../utils/utils";
+import { apiRequest, handleError } from "../utils/utils";
 
 const HomeScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
@@ -27,24 +26,19 @@ const HomeScreen = ({ navigation }) => {
     const timeoutId = setTimeout(() => {
       isTimeout = true;
       controller.abort();
-    }, 15000);
+    }, ABORT_TIMEOUT_MS);
 
     if (isMountedRef.current) setRefreshing(true);
 
     try {
-      const response = await apiRequest({ signal: controller.signal });
+      const response = await apiRequest({
+        endpoint: ENDPOINTS.deviceList,
+        signal: controller.signal,
+      });
 
-      setDevices(response.listDevices);
+      setDevices(response);
     } catch (error) {
-      if (error.name === "AbortError" && !isTimeout) return;
-
-      Alert.alert(
-        "Ошибка",
-        isTimeout
-          ? ERROR_LABELS.AbortError
-          : (ERROR_LABELS[error.name] ?? ERROR_LABELS.NetworkError),
-        [{ text: "OK" }],
-      );
+      handleError(error, isTimeout);
     } finally {
       clearTimeout(timeoutId);
       if (isMountedRef.current && controllerRef.current === controller) {

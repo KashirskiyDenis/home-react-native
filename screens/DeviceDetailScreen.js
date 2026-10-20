@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  Alert,
   RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
+import { ENDPOINTS, ABORT_TIMEOUT_MS } from "../constants/api";
 import { COLOR_STATE_ONLINE, COLOR_STATE_OFFLINE } from "../constants/colors";
-import { DEVICE_PROPERTY_LABELS, ERROR_LABELS } from "../constants/labels";
+import { DEVICE_PROPERTY_LABELS } from "../constants/labels";
 import WaterValveController from "../components/WaterValveController";
 import BoolRow from "../components/BoolRow";
 import ValueRow from "../components/ValueRow";
 import PromptModal from "../components/PromptModal";
 import commonStyles from "../styles/commonStyles";
-import { apiRequest } from "../utils/utils";
+import { apiRequest, handleError } from "../utils/utils";
 
 const DeviceDetailScreen = ({ navigation, route }) => {
   const device = route.params?.device;
@@ -38,30 +38,22 @@ const DeviceDetailScreen = ({ navigation, route }) => {
     const timeoutId = setTimeout(() => {
       isTimeout = true;
       controller.abort();
-    }, 15000);
+    }, ABORT_TIMEOUT_MS);
 
     if (isMountedRef.current) setRefreshing(true);
 
     try {
       const response = await apiRequest({
-        endpoint: "device-detail",
+        endpoint: ENDPOINTS.deviceProperties,
         body: {
           deviceId: deviceId,
         },
         signal: controller.signal,
       });
 
-      setProperties(response.properties);
+      setProperties(response);
     } catch (error) {
-      if (error.name === "AbortError" && !isTimeout) return;
-
-      Alert.alert(
-        "Ошибка",
-        isTimeout
-          ? ERROR_LABELS.AbortError
-          : (ERROR_LABELS[error.name] ?? ERROR_LABELS.NetworkError),
-        [{ text: "OK" }],
-      );
+      handleError(error, isTimeout);
     } finally {
       clearTimeout(timeoutId);
       if (isMountedRef.current && controllerRef.current === controller) {
@@ -71,29 +63,40 @@ const DeviceDetailScreen = ({ navigation, route }) => {
   }, [deviceId]);
 
   const updateDeviceStatus = async (deviceId, statusCode, newValue) => {
+    updateStatus(statusCode, newValue);
+
+    controllerRef.current?.abort();
+
+    const controller = new AbortController();
+    controllerRef.current = controller;
+    let isTimeout = false;
+
+    const timeoutId = setTimeout(() => {
+      isTimeout = true;
+      controller.abort();
+    }, ABORT_TIMEOUT_MS);
+
+    if (isMountedRef.current) setRefreshing(true);
+
     try {
       const response = await apiRequest({
-        endpoint: "set-status",
+        endpoint: ENDPOINTS.deviceSetStatus,
         body: {
           deviceId: deviceId,
           code: statusCode,
           value: newValue,
         },
-        // signal: controller.signal,
+        signal: controller.signal,
       });
-
     } catch (error) {
       setRefreshing(false);
-
-      if (error.name === "AbortError") return;
-
-      Alert.alert(
-        "Ошибка",
-        isTimeout
-          ? ERROR_LABELS.AbortError
-          : (ERROR_LABELS[error.name] ?? ERROR_LABELS.NetworkError),
-        [{ text: "OK" }],
-      );
+      updateStatus(statusCode, !newValue);
+      handleError(error, isTimeout);
+    } finally {
+      clearTimeout(timeoutId);
+      if (isMountedRef.current && controllerRef.current === controller) {
+        setRefreshing(false);
+      }
     }
   };
 
@@ -204,7 +207,6 @@ const DeviceDetailScreen = ({ navigation, route }) => {
                 onValueChange={async (newValue) => {
                   setRefreshing(true);
                   await updateDeviceStatus(deviceId, status.code, newValue);
-                  updateStatus(status.code, newValue);
                   setRefreshing(false);
                 }}
               />
