@@ -3,6 +3,7 @@ import DeviceDetailScreen from "../screens/DeviceDetailScreen";
 import HomeScreen from "../screens/HomeScreen";
 import JournalScreen from "../screens/JournalScreen";
 import SensorsScreen from "../screens/SensorsScreen";
+import SettingsScreen from "../screens/SettingsScreen";
 import { COLOR_BACKGROUND } from "../constants/colors";
 
 const Stack = createNativeStackNavigator();
@@ -45,6 +46,18 @@ function AppStack() {
         component={SensorsScreen}
         options={{
           title: "Сенсоры",
+        }}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          title: "Настройки",
+          headerRight: () => (
+            <Button
+              title="Update count"
+            />
+          ),
         }}
       />
     </Stack.Navigator>

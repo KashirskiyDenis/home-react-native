@@ -8,9 +8,8 @@ import {
 } from "react-native";
 import { ENDPOINTS, ABORT_TIMEOUT_MS } from "../constants/api";
 import { COLOR_STATE_ONLINE, COLOR_STATE_OFFLINE } from "../constants/colors";
-import { DEVICE_PROPERTY_LABELS } from "../constants/labels";
-import WaterValveController from "../components/WaterValveController";
-import BoolRow from "../components/BoolRow";
+import WaterValveController from "../components/devices/WaterValveController";
+import Thermostat from "../components/devices/Thermostat";
 import ValueRow from "../components/ValueRow";
 import PromptModal from "../components/PromptModal";
 import commonStyles from "../styles/commonStyles";
@@ -49,6 +48,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
           deviceId: deviceId,
         },
         signal: controller.signal,
+        method: "POST",
       });
 
       setProperties(response);
@@ -62,7 +62,7 @@ const DeviceDetailScreen = ({ navigation, route }) => {
     }
   }, [deviceId]);
 
-  const updateDeviceStatus = async (deviceId, statusCode, newValue) => {
+  const updateDeviceProperty = async (deviceId, statusCode, newValue) => {
     updateStatus(statusCode, newValue);
 
     controllerRef.current?.abort();
@@ -184,54 +184,24 @@ const DeviceDetailScreen = ({ navigation, route }) => {
         />
         <ValueRow label={"Категория"} value={device.category_title} />
         <View style={commonStyles.listItem}>
-          <Text style={[commonStyles.listItemSubheaders]}>Статусы</Text>
-        </View>
-        {statuses.map((status) => {
-          if (typeof status.value === "number") {
-            return (
-              <ValueRow
-                key={status.code}
-                label={DEVICE_PROPERTY_LABELS[status.code] ?? status.code}
-                value={status.value}
-                valueStyle={commonStyles.textBold}
-                accessory="edit"
-                onPress={openModal}
-              />
-            );
-          } else if (typeof status.value === "boolean") {
-            return (
-              <BoolRow
-                key={status.code}
-                label={DEVICE_PROPERTY_LABELS[status.code] ?? status.code}
-                value={status.value}
-                onValueChange={async (newValue) => {
-                  setRefreshing(true);
-                  await updateDeviceStatus(deviceId, status.code, newValue);
-                  setRefreshing(false);
-                }}
-              />
-            );
-          } else if (typeof status.value === "string") {
-            return (
-              <ValueRow
-                key={status.code}
-                label={DEVICE_PROPERTY_LABELS[status.code] ?? status.code}
-                value={status.value}
-                valueStyle={commonStyles.textBold}
-              />
-            );
-          }
-        })}
-        <View style={commonStyles.listItem}>
           <Text style={[commonStyles.listItemSubheaders]}>Свойства</Text>
         </View>
-        <WaterValveController
-          properties={properties}
-          onPropertyChange={updateProperty}
-          onEditPress={openModal}
-          onSensorPress={onSensorPress}
-          onJournalPress={onJournalPress}
-        />
+        {device.category === "wk" && (
+          <Thermostat
+            properties={properties}
+            onPropertyChange={updateProperty}
+            onEditPress={openModal}
+          />
+        )}
+        {device.category === "sfkzq" && (
+          <WaterValveController
+            properties={properties}
+            onPropertyChange={updateProperty}
+            onEditPress={openModal}
+            onSensorPress={onSensorPress}
+            onJournalPress={onJournalPress}
+          />
+        )}
       </ScrollView>
     </>
   );

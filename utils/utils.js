@@ -41,10 +41,10 @@ export const checkResponse = async (response) => {
   return data;
 };
 
-export const apiRequest = async ({ endpoint = "", body, signal }) => {
+export const apiRequest = async ({ endpoint, body, signal, method }) => {
   const response = await checkResponse(
     await fetch(API_BASE_URL + endpoint, {
-      method: "POST",
+      method,
       headers: {
         "Content-Type": "application/json",
         "X-API-Key": API_KEY,
@@ -58,6 +58,7 @@ export const apiRequest = async ({ endpoint = "", body, signal }) => {
 };
 
 export const handleError = (error, isTimeout) => {
+  console.log(error);
   if (error.name === "AbortError" && !isTimeout) return;
 
   Alert.alert(

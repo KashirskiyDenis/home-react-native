@@ -34,6 +34,7 @@ const HomeScreen = ({ navigation }) => {
       const response = await apiRequest({
         endpoint: ENDPOINTS.deviceList,
         signal: controller.signal,
+        method : "GET",
       });
 
       setDevices(response);
